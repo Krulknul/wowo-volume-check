@@ -1,6 +1,6 @@
 
 
-This script is meant to be a "good enough" proof of the WOWO DeFi Connect Telegram bot crossing 1 million XRD in total trade volume.
+This script is meant to be a proof of the WOWO DeFi Connect Telegram bot crossing 1 million XRD in total trade volume.
 Unfortunately, it is a bit difficult to gather fully accurate volume numbers taking into account the market price of Radix alts at the time of the transaction after the fact. The WOWO bot is built to fire and forget, so I do not store that price information. Still, we can confidently prove that 1M XRD was crossed. I will likely build some transaction tracking for future analytics purposes to prevent having to do this again.
 
 I started by identifying swap transactions done using the bot by filtering for its signature message, which is `Swap using WOWO TIP & SWAP BOT 🚀`. I created a CSV of the transactions that contain this message and included it in this repository as `transactions.csv`. For that, I used this SQL query with a Network Gateway PostgreSQL database:
