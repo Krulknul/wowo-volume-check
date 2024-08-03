@@ -22,6 +22,8 @@ fs.createReadStream('transactions.csv')
       tx.transaction.balance_changes?.fungible_balance_changes.forEach((change) => {
         // if the change is the removal of fungible resource from an account, it must be the input to the swap.
         // we can then add the volume to the volume_map
+        // Since fungible_balance_changes is all non-fee-related changes and only one account should be affected,
+        // we can safely assume that the change is the input to the swap
         if (change.entity_address.startsWith("account_") && Number(change.balance_change) < 0) {
           const volume = volume_map.get(change.resource_address) || 0
           volume_map.set(change.resource_address, volume + Math.abs(Number(change.balance_change)))
