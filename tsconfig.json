@@ -9,8 +9,13 @@
     "outDir": "./dist",
     "baseUrl": "./src",
     "experimentalDecorators": true,
-    "strict": true
+    "strict": true,
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "src/**/*.spec.ts"]
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/**/*.spec.ts"
+  ]
 }
