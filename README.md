@@ -19,7 +19,7 @@ I collect a hashmap of volume metrics per `ResourceAddress`. See the result:
 ![Alt text](result.png)
 Notice how the `ResourceAddress` for XRD has over 1.7M associated with it. This means that at least 1.7M XRD was used as input in a swap using the bot, proving that the bot did more than 1M in XRD sell volume.
 
-At the time of writing, the bot quotes 3,410,900 XRD in total volume. Proving this aggregated metric conclusively is more difficult after the fact, as the amounts are calculated by market prices at the time the transaction is executed. The missing volume mostly comes from WOWO, xUSDC and HUG volume. Decisively proving that metric is out of the scope of this script, but I can make the following observation: If we assume that users sell about as much as they buy against XRD, then this metric would make sense considering that 1.7M (the XRD sell volume) * 2 = 3.4M XRD of volume.
+At the time of writing, the bot quotes 3,410,900 XRD in total volume. Proving this aggregated metric conclusively is more difficult after the fact, as the amounts are calculated by market prices at the time the transaction is executed. The missing volume here is all the volume from selling alts for XRD, or alts for alts, and mostly comes from WOWO, xUSDC and HUG volume. Decisively proving that metric is out of the scope of this script, but I can make the following observation: If we assume that users sell about as much as they buy against XRD, then this metric would make sense considering that 1.7M (the XRD sell volume) * 2 = 3.4M XRD of volume.
 
 
 ## Install
