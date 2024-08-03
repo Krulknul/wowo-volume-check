@@ -1,16 +1,26 @@
-#### This project was created using [themetalfleece/nodejs-typescript-template](https://github.com/themetalfleece/nodejs-typescript-template)
 
-# This template gets updated daily so the latest dependencies are always used!
 
-## What to do after using this template
+This script is meant to be a "good enough" proof of the WOWO DeFi Connect Telegram bot crossing 1 million XRD in total trade volume.
+Unfortunately, it is a bit difficult to gather fully accurate volume numbers taking into account the market price of Radix alts at the time of the transaction after the fact. The WOWO bot is built to fire and forget, so I do not store that price information. Still, we can confidently prove that 1M XRD was crossed. I will likely build some transaction tracking for future analytics purposes to prevent having to do this again.
 
-1. Edit `package.json` to set the project name, version, description, and author.
-2. Edit the `LICENSE` file to use your name in the Copyright section.
-3. Edit the `.prettierrc.json` file with your preferred values.
-4. Remove the `.github/workflows/upgrade-dependencies.yml` files, since it contains the workflow to upgrade all dependencies on a daily basis.
-   * In case you would like to keep it, remove lines 7, 30, 32 from it. Also, change the git user name in line 28.
-5. Delete this section from the `README.md` file.
-6. Start coding by editing the `src/app.ts` file!
+I started by identifying swap transactions done using the bot by filtering for its signature message, which is `Swap using WOWO TIP & SWAP BOT 🚀`. I created a CSV of the transactions that contain this message and included it in this repository as `transactions.csv`. For that, I used this SQL query with a Network Gateway PostgreSQL database:
+```SQL
+SELECT *
+FROM ledger_transactions
+WHERE message is not NULL
+  AND message->>'type' = 'Plaintext'
+  AND message->'content'->>'type' = 'String'
+  AND message->'content'->>'value' = 'Swap using WOWO TIP & SWAP BOT 🚀';
+```
+
+Then, I process this CSV by looking up the transaction's balance changes using the Radix public gateway. Some of the rationale of the script is included in its comments.
+
+I collect a hashmap of volume metrics per `ResourceAddress`. See the result:
+![Alt text](result.png)
+Notice how the `ResourceAddress` for XRD has over 1.7M associated with it. This means that at least 1.7M XRD was used as input in a swap using the bot, proving that the bot did more than 1M in XRD sell volume.
+
+At the time of writing, the bot quotes 3,410,900 XRD in total volume. Proving this aggregated metric conclusively is more difficult after the fact, as the amounts are calculated by market prices at the time the transaction is executed. The missing volume mostly comes from WOWO, xUSDC and HUG volume. Decisively proving that metric is out of the scope of this script, but I can make the following observation: If we assume that users sell about as much as they buy against XRD, then this metric would make sense considering that 1.7M (the XRD sell volume) * 2 = 3.4M XRD of volume.
+
 
 ## Install
 
@@ -18,50 +28,8 @@
 2. Clone this repository, and using a terminal navigate to its directory.
 3. Run `yarn` or `npm install` to install the dependencies.
 
-## Build & Run
+## Run
 
-1. Copy the contents of the `.env.example` file to a `.env` next to it, and edit it with your values.
-2. Run `yarn build` or `npm build` to build the files.
-3. Run `yarn start` or `npm start` to start the application.
+1. Build the code using `npm run build`
+2. Run the script using `npm start`
 
--   You can run `yarn dev` or `npm dev` to combine the 2 steps above, while listening to changes and restarting automatically.
-
-## Run with Docker
-
-1. Build:
-
-    ```
-    docker build -t my-app .
-    ```
-
-    Replacing `my-app` with the image name.
-
-2. Run
-    ```
-    docker run -d -p 3000:3000 my-app
-    ```
-    Replacing `my-app` with the image name, and `3000:3000` with the `host:container` ports to publish.
-
-## Developing
-
-### Visual Studio Code
-
--   Installing the Eslint (`dbaeumer.vscode-eslint`) and Prettier - Code formatter (`esbenp.prettier-vscode`) extensions is recommended.
-
-## Linting & Formatting
-
--   Run `yarn lint` or `npm lint` to lint the code.
--   Run `yarn format` or `npm format` to format the code.
-
-## Testing
-
-Check the placeholder test examples to get started : 
-
-- `/src/app.ts` that provide a function `sum` 
-- `/test/app.spec.ts` who test the `sum` function 
-
-This files are just an example, feel free to remove it
-
--   Run `yarn test` or `npm test` to execute all tests.
--   Run `yarn test:watch` or `npm test:watch` to run tests in watch (loop) mode.
--   Run `yarn test:coverage` or `npm test:coverage` to see the tests coverage report.
