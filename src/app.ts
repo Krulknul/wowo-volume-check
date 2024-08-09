@@ -13,12 +13,25 @@ let transactionsHandled = 0
 // map stores the volume of each token by its ResourceAddress
 const volume_map = new Map<string, number>()
 
-fs.createReadStream('transactions.csv')
+async function doWithInfiniteRetry<T>(thing: () => Promise<T>): Promise<T> {
+  while (true) {
+    try {
+      const response = await thing();
+      return response
+    } catch (error) {
+      // Optional: delay before retrying
+      console.error('Error:', error)
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+    }
+  }
+}
+
+fs.createReadStream('filtered_transactions.csv')
   .pipe(csv())
   .on('data', (data: any) => csvLines.push(data))
   .on('end', () => {
     csvLines.forEach(async (result) => {
-      const tx = await gatewayApi.transaction.getCommittedDetails(result.intent_hash)
+      const tx = await doWithInfiniteRetry(() => gatewayApi.transaction.getCommittedDetails(result.intent_hash))
       tx.transaction.balance_changes?.fungible_balance_changes.forEach((change) => {
         // if the change is the removal of fungible resource from an account, it must be the input to the swap.
         // we can then add the volume to the volume_map
